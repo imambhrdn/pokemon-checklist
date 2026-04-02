@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: white !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+
+  /* Page break controls */
+  .page-break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Avoid breaking inside card items */
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Ensure columns don't break awkwardly */
+  .columns-3 {
+    break-inside: avoid;
+  }
+}
