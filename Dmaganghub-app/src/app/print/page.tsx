@@ -39,46 +39,17 @@ export default function PrintPage() {
 
   const getSetTitle = () => {
     if (customTitle) {
-      return `Pokémon TCG: ${customTitle} Card List`;
+      return customTitle;
     }
     if (isCustomData) {
       return 'Custom Card Checklist';
     }
-    return 'Pokémon TCG: Mega Evolution-Perfect Order Card List';
+    return 'Mega Evolution-Perfect Order Card List';
   };
 
   // Distribute cards column-first, then transpose for CSS Grid
   const orderedCards = useMemo(() => {
-    const numColumns = 3;
-    const columns: PokemonCard[][] = Array.from({ length: numColumns }, () => []);
-
-    // Calculate cards per column
-    const baseCount = Math.floor(cards.length / numColumns);
-    const extra = cards.length % numColumns;
-
-    let index = 0;
-    for (let col = 0; col < numColumns; col++) {
-      // First 'extra' columns get one extra card
-      const countForColumn = baseCount + (col < extra ? 1 : 0);
-      for (let row = 0; row < countForColumn; row++) {
-        columns[col].push(cards[index++]);
-      }
-    }
-
-    // Find max column height
-    const maxHeight = Math.max(...columns.map(col => col.length));
-
-    // Transpose: convert to rows for CSS Grid (which reads left-to-right)
-    const transposed: PokemonCard[] = [];
-    for (let row = 0; row < maxHeight; row++) {
-      for (let col = 0; col < numColumns; col++) {
-        if (row < columns[col].length) {
-          transposed.push(columns[col][row]);
-        }
-      }
-    }
-
-    return transposed;
+    return cards;
   }, [cards]);
 
   // Get rarity icon component dengan warna berbeda
@@ -182,66 +153,74 @@ export default function PrintPage() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans p-4 print:p-0">
+    <div className="bg-white min-h-screen font-sans p-4 print:p-0">
 
       {/* Kontainer Kertas A4 */}
-      <div ref={pageRef} className="w-[210mm] mx-auto bg-white text-[10px] text-black print:w-full print:mx-0 shadow-lg print:shadow-none">
+      <div ref={pageRef} className="w-[210mm] mx-auto text-[10px] text-black print:w-full print:mx-0 print:shadow-none">
 
         {/* Header Section */}
-        <header className="flex justify-between items-center border-b-2 border-black pb-4 px-4 pt-6">
+        <header className="flex justify-between items-center pb-4 px-4 pt-6">
           {/* Logo or Default Text */}
-          <div className="w-36 h-14 bg-green-600 text-white flex items-center justify-center font-black italic rounded-md overflow-hidden">
+          <div className="w-36 h-14 bg-green-600 text-white flex items-center justify-center font-black italic overflow-hidden">
             {logo ? (
               <img src={logo} alt="Set Logo" className="w-full h-full object-contain bg-white" />
             ) : (
-              <span className="text-base">PERFECT ORDER</span>
+              <span className="text-sm">PERFECT ORDER</span>
             )}
           </div>
 
           <div className="text-center flex-1">
-            <h1 className="font-bold text-xl tracking-wide">{getSetTitle()}</h1>
-            {isCustomData && (
-              <p className="text-gray-500 text-xs mt-1">Total: {cards.length} cards</p>
-            )}
+            <div className="py-2 px-6">
+              <h1 className="font-black text-2xl tracking-wider text-gray-900 uppercase ">
+                {getSetTitle()}
+              </h1>
+              <div className="flex items-center justify-center gap-2 mt-1">
+                <div className="h-px bg-gray-400 w-12"></div>
+                <p className="text-gray-700 text-xs font-bold">
+                  Total Cards <span className="text-blue-600">{cards.length}</span>
+                </p>
+                <div className="h-px bg-gray-400 w-12"></div>
+              </div>
+            </div>
           </div>
 
           <div className="w-28 h-14 bg-yellow-400 text-blue-700 flex items-center justify-center font-black rounded-md">
-            <span className="text-sm">Pokémon</span>
+            <span className="text-xs">Pokémon</span>
           </div>
         </header>
 
         {/* Legend / Key Section */}
         <div className="px-4 pt-3 pb-4">
           <div className="grid grid-cols-4 gap-2 text-[8px]">
-            <div className="flex items-center gap-1 p-1.5 bg-gray-50 rounded border">
+            <div className="flex items-center gap-1 p-1.5">
               <Circle size={7} className="fill-gray-500 text-gray-500 flex-shrink-0" />
               <span className="leading-tight">Common</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-green-50 rounded border border-green-200">
+            <div className="flex items-center gap-1 p-1.5 border-green-200">
               <Diamond size={7} className="fill-green-600 text-green-600 flex-shrink-0" />
               <span className="leading-tight">Uncommon</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-blue-50 rounded border border-blue-200">
+            <div className="flex items-center gap-1 p-1.5 border-blue-200">
               <Star size={7} className="fill-blue-500 text-blue-500 flex-shrink-0" />
               <span className="leading-tight">Rare</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-purple-50 rounded border border-purple-200">
+            <div className="flex items-center gap-1 p-1.5 border-purple-200">
               <Sparkles size={7} className="fill-purple-600 text-purple-600 flex-shrink-0" />
               <span className="leading-tight">Double Rare</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-yellow-50 rounded border border-yellow-200">
+            <div className="flex items-center gap-1 p-1.5 border-yellow-200">
               <Crown size={7} className="fill-yellow-500 text-yellow-500 flex-shrink-0" />
               <span className="leading-tight">Illustration Rare</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-pink-50 rounded border border-pink-200">
+            <div className="flex items-center gap-1 p-1.5 border-pink-200">
               <Gem size={7} className="fill-pink-500 text-pink-500 flex-shrink-0" />
               <span className="leading-tight">Ultra Rare</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-orange-50 rounded border border-orange-200">
+            <div className="flex items-center gap-1 p-1.5 border-orange-200">
               <Flame size={7} className="fill-orange-500 text-orange-500 flex-shrink-0" />
               <span className="leading-tight">Special Illustration Rare</span>
             </div>
-            <div className="flex items-center gap-1 p-1.5 bg-red-50 rounded border border-red-200">
+            <div className="flex items-center gap-1 p-1.5 border-red-200">
               <Hexagon size={7} className="fill-red-600 text-red-600 flex-shrink-0" />
               <span className="leading-tight">Mega Hyper Rare</span>
             </div>
@@ -250,21 +229,14 @@ export default function PrintPage() {
 
         {/* 3-Column Grid Layout untuk Daftar Kartu */}
         <div className="px-4 pb-4">
-          <div className="grid grid-cols-3 gap-x-6 gap-y-1">
+          <div className="grid grid-cols-4 gap-x-3 gap-y-1">
             {orderedCards.map((card, index) => (
-              <div key={`card-${index}`} className="flex items-center justify-between py-1.5 border-b border-gray-200">
-
-                {/* Kiri: ID, Nama */}
-                <div className="flex items-center gap-2 overflow-hidden flex-1 min-w-0">
-                  <span className="text-gray-400 font-mono text-[9px] flex-shrink-0">#{card.id}</span>
-                  <span className="font-medium truncate text-[10px]">{card.name}</span>
-                </div>
-
-                {/* Kanan: Simbol Rarity */}
-                <div className="flex-shrink-0 ml-2">
+              <div key={`card-${index}`} className="flex items-center gap-1 py-1 border-b border-gray-200">
+                <span className="text-gray-400 font-mono text-[8px] flex-shrink-0">#{card.id}</span>
+                <span className="font-medium text-[8px] flex-1 truncate leading-tight">{card.name}</span>
+                <div className="flex-shrink-0">
                   {getRarityIcon(card.rarity)}
                 </div>
-
               </div>
             ))}
           </div>
@@ -276,21 +248,21 @@ export default function PrintPage() {
         <button
           onClick={handleExportPNG}
           disabled={isExporting}
-          className="px-5 py-3 bg-green-600 text-white font-bold rounded-full shadow-2xl hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50"
+          className="px-5 py-3 text-green-600 font-bold rounded-full hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <Download size={18} />
           {isExporting ? '...' : 'PNG'}
         </button>
         <button
           onClick={() => window.print()}
-          className="px-5 py-3 bg-black text-white font-bold rounded-full shadow-2xl hover:bg-gray-800 transition-colors flex items-center gap-2"
+          className="px-5 py-3 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition-colors flex items-center gap-2"
         >
           <Printer size={18} />
           PDF
         </button>
         <Link
           href="/"
-          className="px-5 py-3 bg-gray-500 text-white font-bold rounded-full shadow-2xl hover:bg-gray-600 transition-colors flex items-center gap-2 text-center"
+          className="px-5 py-3 bg-gray-500 text-white font-bold rounded-full hover:bg-gray-600 transition-colors flex items-center gap-2 text-center"
         >
           ←
         </Link>
